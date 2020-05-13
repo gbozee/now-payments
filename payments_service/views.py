@@ -141,7 +141,7 @@ middlewares = [
 
 routes = [
     Route("/", home),
-    Route("/credentials", payment_credentials),
+    # Route("/credentials", payment_credentials),
     Route("/webhook", webhook_callback, methods=["POST"]),
     Route("/verify-payment/{identifier}", verify_payment),
     Route(
