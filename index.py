@@ -1,0 +1,1 @@
+from payments_service.views import app

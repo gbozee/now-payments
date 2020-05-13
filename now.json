@@ -1,0 +1,27 @@
+{
+    "version": 2,
+    "builds": [
+        {
+            "src": "index.py",
+            "use": "@now/python",
+            "config": {
+                "maxLambdaSize": "15mb"
+            }
+        }
+    ],
+    "routes": [
+        {
+            "src": "/.*",
+            "dest": "/",
+            "headers": {
+                "cache-control": "s-maxage=604800",
+                "Access-Control-Allow-Origin": "*"
+            }
+        }
+    ],
+    "env": {
+        "DEBUG": "False",
+        "NOW_SHEET_SERVICE": "@sheet_service",
+        "PAYMENT_SHEET": "@payment_sheet"
+    }
+}
