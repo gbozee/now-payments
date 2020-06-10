@@ -22,6 +22,7 @@
     "env": {
         "DEBUG": "False",
         "NOW_SHEET_SERVICE": "@sheet_service",
-        "PAYMENT_SHEET": "@payment_sheet"
+        "PAYMENT_SHEET": "@payment_sheet",
+        "HOST_URL": "@payment_host_url"
     }
 }

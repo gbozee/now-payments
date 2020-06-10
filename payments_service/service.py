@@ -53,6 +53,7 @@ class PaymentInstance:
 
     def webhook_callback_func(self, params):
         if self.callback_url:
+            print(self.callback_url)
             result = requests.post(self.callback_url, json=params)
             print(result.status_code)
 
