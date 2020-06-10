@@ -29,7 +29,6 @@ async def payment_credentials(request: Request):
 async def webhook_callback(request: Request):
     signature = request.headers.get("verif-hash")
     body = await request.body()
-
     async def task():
         payment_instance = await service.build_payment_instance(signature)
         if payment_instance:

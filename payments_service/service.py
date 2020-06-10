@@ -13,6 +13,12 @@ def payment_signal(sender, **kwargs):
     signal = kwargs.pop("signal")
     callback_func(kwargs)
 
+@receiver(signals.event_signal)
+def event_signal(sender, **kwargs):
+    callback_func = kwargs.pop("callback_func")
+    signal = kwargs.pop("signal")
+    callback_func(kwargs)
+
 
 async def loop_helper(callback):
     loop = asyncio.get_event_loop()
