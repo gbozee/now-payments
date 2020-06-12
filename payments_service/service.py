@@ -15,6 +15,7 @@ def payment_signal(sender, **kwargs):
 
 @receiver(signals.event_signal)
 def event_signal(sender, **kwargs):
+    import pdb; pdb.set_trace()
     callback_func = kwargs.pop("callback_func")
     signal = kwargs.pop("signal")
     callback_func(kwargs)
