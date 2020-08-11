@@ -3,6 +3,7 @@ import requests
 import typing
 from payments_service import settings
 from ravepay.utils import RavepayAPI
+from paystack.utils import PaystackAPI
 from ravepay.api import signals
 from dispatch import receiver
 
@@ -13,9 +14,12 @@ def payment_signal(sender, **kwargs):
     signal = kwargs.pop("signal")
     callback_func(kwargs)
 
+
 @receiver(signals.event_signal)
 def event_signal(sender, **kwargs):
-    import pdb; pdb.set_trace()
+    import pdb
+
+    pdb.set_trace()
     callback_func = kwargs.pop("callback_func")
     signal = kwargs.pop("signal")
     callback_func(kwargs)
@@ -49,6 +53,12 @@ class PaymentInstance:
                 test=is_dev,
                 django=False,
                 webhook_hash=self.post_params["id"],
+            )
+        if self.post_params["type"] == "paystack":
+            return PaystackAPI(
+                public_key=self.post_params["public_key"],
+                secret_key=self.post_params["secret_key"],
+                django=False,
             )
 
     @property
