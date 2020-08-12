@@ -1,5 +1,5 @@
 starlette==0.13.4
 uvicorn>=0.11.7
 https://github.com/gbozee/django-ravepay/archive/0.2.7.tar.gz
-https://github.com/gbozee/pypaystack/archive/1.0.10.tar.gz
+https://github.com/gbozee/pypaystack/archive/1.0.11.tar.gz
 requests==2.23.0

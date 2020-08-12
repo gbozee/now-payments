@@ -65,10 +65,13 @@ async def verify_payment(request: Request):
     identifier = request.path_params["identifier"]
     amount = request.query_params.get("amount")
     ref = request.query_params.get("txref")
+    trxref = request.query_params.get('trxref')
     amount_only = request.query_params.get("amount_only") or ""
     if amount and ref:
         a_only = amount_only.lower().strip() == "true"
         payment_instance = await service.build_payment_instance(identifier)
+        if payment_instance.kind == 'paystack' and trxref:
+            ref = trxref
         result = payment_instance.instance.verify_payment(
             ref, amount=amount, amount_only=a_only
         )

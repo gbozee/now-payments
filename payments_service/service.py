@@ -59,6 +59,7 @@ class PaymentInstance:
                 public_key=self.post_params["public_key"],
                 secret_key=self.post_params["secret_key"],
                 django=False,
+                base_url="https://api.paystack.co",
             )
 
     @property
@@ -66,6 +67,8 @@ class PaymentInstance:
         return self.post_params["webhook_url"]
 
     def build_redirect_url(self, amount, order_id):
+        if self.kind == "paystack":
+            amount = amount * 100
         return f"{settings.HOST_URL}/verify-payment/{self.identifier}?amount={amount}&txref={order_id}&amount_only=true"
 
     def webhook_callback_func(self, params):
