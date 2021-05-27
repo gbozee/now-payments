@@ -1,4 +1,5 @@
 import asyncio
+from paystack.api.transaction import Transaction
 import requests
 import typing
 from payments_service import settings
@@ -31,6 +32,30 @@ async def loop_helper(callback):
     return await future
 
 
+class NewTransaction(Transaction):
+    def verify_result(self, response, **kwargs):
+        if response.status_code == 200:
+            result = response.json()
+            data = result["data"]
+            amount = kwargs.get("amount")
+            if amount:
+                if float("%.0f" % data["amount"]) == float("%.0f" % float(amount)):
+                    return True, result["message"]
+                return False, data["amount"]
+            return True, result["message"], data
+
+        if response.status_code >= 400:
+            return False, "Could not verify transaction"
+
+
+class NewPaystackAPI(PaystackAPI):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.transaction_api = NewTransaction(
+            self.make_request, secret_key=self.secret_key, public_key=self.public_key
+        )
+
+
 class PaymentInstance:
     def __init__(self, post_params):
         self.post_params = post_params
@@ -55,7 +80,7 @@ class PaymentInstance:
                 webhook_hash=self.post_params["id"],
             )
         if self.post_params["type"] == "paystack":
-            return PaystackAPI(
+            return NewPaystackAPI(
                 public_key=self.post_params["public_key"],
                 secret_key=self.post_params["secret_key"],
                 django=False,
