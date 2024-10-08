@@ -51,6 +51,16 @@ class NewPaystackAPI(PaystackAPI):
         self.transaction_api = NewTransaction(
             self.make_request, secret_key=self.secret_key, public_key=self.public_key
         )
+        
+    def processor_info(self, *args, **kwargs):
+        result = super().processor_info(*args, **kwargs)
+        result['p_amount'] = result['amount'] * 100
+        return result
+        
+    def other_payment_info(self, **kwargs):
+        result = super().other_payment_info(**kwargs)
+        result['amount'] = result['amount'] * 100
+        return result
 
 
 class PaymentInstance:

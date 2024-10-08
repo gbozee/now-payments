@@ -96,7 +96,7 @@ async def client_payment_object(request: Request):
     order_id = body.get("order")
     user_info = body.get("user") or {}
     processor_info = body.get("processor_info") or {}
-
+    
     payment_instance = await service.build_payment_instance(identifier)
     if not all([amount, order_id]):
         return JSONResponse(

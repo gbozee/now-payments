@@ -11,8 +11,7 @@ services:
       - PAYMENT_SHEET=${PAYMENT_SHEET:-}
       - NOW_SHEET_SERVICE=${NOW_SHEET_SERVICE:-}
       - NOW_SHEET_ID=${NOW_SHEET_ID:-}
-    # volumes:
-    #   - .:/app
+    
     # command: ["uv", "run", "uvicorn", "index:app", "--host", "0.0.0.0", "--port", "8000"]
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8000"] # Assuming there's a /health endpoint
