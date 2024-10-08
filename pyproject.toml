@@ -1,0 +1,19 @@
+[project]
+name = "now-payments"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "pypaystack",
+    "pyravepay",
+    "requests-async",
+    "requests==2.23.0",
+    "starlette==0.13.4",
+    "uvicorn>=0.31.0",
+]
+
+[tool.uv.sources]
+pyravepay = { url = "https://github.com/gbozee/django-ravepay/archive/0.2.7.tar.gz" }
+pypaystack = { url = "https://github.com/gbozee/pypaystack/archive/1.0.11.tar.gz" }
+requests-async = { url = "https://github.com/encode/requests-async/archive/master.zip" }
