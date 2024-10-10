@@ -7,6 +7,7 @@ from ravepay.utils import RavepayAPI
 from paystack.utils import PaystackAPI
 from ravepay.api import signals
 from dispatch import receiver
+from .flutterwave import FlutterwaveAPI
 
 
 @receiver(signals.successful_payment_signal)
@@ -92,6 +93,14 @@ class PaymentInstance:
                 secret_key=self.post_params["secret_key"],
                 django=False,
                 base_url="https://api.paystack.co",
+            )
+        if self.post_params['type'] == 'flutterwave':
+            return FlutterwaveAPI(
+                public_key=self.post_params["public_key"],
+                secret_key=self.post_params["secret_key"],
+                django=False,
+                base_url='https://api.flutterwave.com/v3',
+                webhook_hash=self.post_params["id"],
             )
 
     @property
