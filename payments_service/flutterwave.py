@@ -191,7 +191,7 @@ class FlutterwaveAPI:
     def generate_digest(self, data):
         return self.webhook_hash
 
-    def processor_info(self, amount, redirect_url=None):
+    def processor_info(self, amount, redirect_url=None,**kwargs):
         return {
             "amount": float("%.2f" % amount),
             "js_script": get_js_script(),

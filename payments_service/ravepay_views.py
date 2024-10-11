@@ -74,7 +74,9 @@ async def verify_payment(request: Request):
         payment_instance = await service.build_payment_instance(identifier)
         if payment_instance.kind == "paystack" and trxref:
             ref = trxref
-        if payment_instance.kind == 'flutterwave' and trxref:
+        if payment_instance.kind == "flutterwave" and trxref:
+            ref = trxref
+        if payment_instance.kind == "stripe" and trxref:
             ref = trxref
         result = payment_instance.instance.verify_payment(
             ref, amount=amount, amount_only=a_only
@@ -99,6 +101,7 @@ async def client_payment_object(request: Request):
     currency = body.get("currency")
     order_id = body.get("order")
     user_info = body.get("user") or {}
+    return_url = body.get("return_url")
     processor_info = body.get("processor_info") or {}
 
     payment_instance = await service.build_payment_instance(identifier)
@@ -107,7 +110,6 @@ async def client_payment_object(request: Request):
             {"status": False, "msg": "missing `amount` or `order`"}, status_code=400
         )
     redirect_url = payment_instance.build_redirect_url(amount, order_id)
-    obj = payment_instance.instance.processor_info(amount, redirect_url=redirect_url)
     other_info = payment_instance.instance.other_payment_info(
         currency=currency,
         **{
@@ -115,8 +117,14 @@ async def client_payment_object(request: Request):
             "order": order_id,
             "callback_url": redirect_url,
             "amount": amount,
+            "return_url": return_url,
             **processor_info,
         },
+    )
+    obj = payment_instance.instance.processor_info(
+        amount,
+        redirect_url=redirect_url,
+        session_secret=other_info.get("session_secret"),
     )
     return JSONResponse(
         {

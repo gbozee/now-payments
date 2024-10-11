@@ -5,11 +5,14 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
+    "flask>=3.0.3",
     "pypaystack",
     "pyravepay",
     "requests-async",
     "requests==2.23.0",
+    "ruff>=0.6.9",
     "starlette==0.13.4",
+    "stripe>=11.1.0",
     "uvicorn>=0.31.0",
 ]
 
