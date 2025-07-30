@@ -26,6 +26,8 @@ async def webhook_callback(request: Request):
 
     async def task():
         payment_instance = await service.build_payment_instance(signature)
+        if signature == "flutterwave_dev":
+            payment_instance = await service.build_payment_instance("ravepay_dev")
         if payment_instance:
             payment_instance.instance.webhook_api.verify(
                 signature,
@@ -65,12 +67,16 @@ async def verify_payment(request: Request):
     identifier = request.path_params["identifier"]
     amount = request.query_params.get("amount")
     ref = request.query_params.get("txref")
-    trxref = request.query_params.get('trxref')
+    trxref = request.query_params.get("trxref")
     amount_only = request.query_params.get("amount_only") or ""
     if amount and ref:
         a_only = amount_only.lower().strip() == "true"
         payment_instance = await service.build_payment_instance(identifier)
-        if payment_instance.kind == 'paystack' and trxref:
+        if payment_instance.kind == "paystack" and trxref:
+            ref = trxref
+        if payment_instance.kind == "flutterwave" and trxref:
+            ref = trxref
+        if payment_instance.kind == "stripe" and trxref:
             ref = trxref
         result = payment_instance.instance.verify_payment(
             ref, amount=amount, amount_only=a_only
@@ -95,6 +101,7 @@ async def client_payment_object(request: Request):
     currency = body.get("currency")
     order_id = body.get("order")
     user_info = body.get("user") or {}
+    return_url = body.get("return_url")
     processor_info = body.get("processor_info") or {}
 
     payment_instance = await service.build_payment_instance(identifier)
@@ -103,7 +110,6 @@ async def client_payment_object(request: Request):
             {"status": False, "msg": "missing `amount` or `order`"}, status_code=400
         )
     redirect_url = payment_instance.build_redirect_url(amount, order_id)
-    obj = payment_instance.instance.processor_info(amount, redirect_url=redirect_url)
     other_info = payment_instance.instance.other_payment_info(
         currency=currency,
         **{
@@ -111,8 +117,14 @@ async def client_payment_object(request: Request):
             "order": order_id,
             "callback_url": redirect_url,
             "amount": amount,
+            "return_url": return_url,
             **processor_info,
-        }
+        },
+    )
+    obj = payment_instance.instance.processor_info(
+        amount,
+        redirect_url=redirect_url,
+        session_secret=other_info.get("session_secret"),
     )
     return JSONResponse(
         {

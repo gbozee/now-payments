@@ -7,6 +7,8 @@ from ravepay.utils import RavepayAPI
 from paystack.utils import PaystackAPI
 from ravepay.api import signals
 from dispatch import receiver
+from .flutterwave import FlutterwaveAPI
+from .stripe_payment import StripeAPI
 
 
 @receiver(signals.successful_payment_signal)
@@ -51,6 +53,17 @@ class NewPaystackAPI(PaystackAPI):
         self.transaction_api = NewTransaction(
             self.make_request, secret_key=self.secret_key, public_key=self.public_key
         )
+        
+    def processor_info(self, *args, **kwargs):
+        kwargs.pop('session_secret',None)
+        result = super().processor_info(*args, **kwargs)
+        result['p_amount'] = result['amount'] * 100
+        return result
+        
+    def other_payment_info(self, **kwargs):
+        result = super().other_payment_info(**kwargs)
+        result['amount'] = result['amount'] * 100
+        return result
 
 
 class PaymentInstance:
@@ -82,6 +95,21 @@ class PaymentInstance:
                 secret_key=self.post_params["secret_key"],
                 django=False,
                 base_url="https://api.paystack.co",
+            )
+        if self.post_params['type'] == 'flutterwave':
+            return FlutterwaveAPI(
+                public_key=self.post_params["public_key"],
+                secret_key=self.post_params["secret_key"],
+                django=False,
+                base_url='https://api.flutterwave.com/v3',
+                webhook_hash=self.post_params["id"],
+            )
+        if self.post_params['type'] == 'stripe':
+            return StripeAPI(
+                public_key=self.post_params["public_key"],
+                secret_key=self.post_params["secret_key"],
+                django=False,
+                id=self.post_params["id"],
             )
 
     @property
