@@ -78,6 +78,7 @@ async def verify_payment(request: Request):
             ref = trxref
         if payment_instance.kind == "stripe" and trxref:
             ref = trxref
+
         result = payment_instance.instance.verify_payment(
             ref, amount=amount, amount_only=a_only
         )
@@ -108,6 +109,10 @@ async def client_payment_object(request: Request):
     if not all([amount, order_id]):
         return JSONResponse(
             {"status": False, "msg": "missing `amount` or `order`"}, status_code=400
+        )
+    if not payment_instance:
+        return JSONResponse(
+            {"status": False, "msg": "Invalid identifier"}, status_code=400
         )
     redirect_url = payment_instance.build_redirect_url(amount, order_id)
     other_info = payment_instance.instance.other_payment_info(

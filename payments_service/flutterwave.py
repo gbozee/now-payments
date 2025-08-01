@@ -90,6 +90,7 @@ class Transaction(BaseClass):
     def verify_payment(self, code, amount_only=True, **kwargs):
         path = "/transactions/{}/verify".format(code)
         response = self.make_request("GET", path)
+        
         if amount_only:
             return self.verify_result(response, **kwargs)
         # add test for this scenario
