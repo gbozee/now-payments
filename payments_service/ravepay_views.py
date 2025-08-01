@@ -105,6 +105,11 @@ async def client_payment_object(request: Request):
     return_url = body.get("return_url")
     processor_info = body.get("processor_info") or {}
 
+    if not identifier:
+        return JSONResponse(
+            {"status": False, "msg": "Invalid identifier"}, status_code=400
+        )
+
     payment_instance = await service.build_payment_instance(identifier)
     if not all([amount, order_id]):
         return JSONResponse(
