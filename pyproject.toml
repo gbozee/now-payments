@@ -11,7 +11,7 @@ dependencies = [
     "requests-async",
     "requests==2.23.0",
     "ruff>=0.6.9",
-    "starlette==0.13.4",
+    "starlette==0.47.2",
     "stripe>=11.1.0",
     "uvicorn>=0.31.0",
 ]
