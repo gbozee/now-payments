@@ -140,6 +140,7 @@ async def post(_id):
             },
         )
         print("result", result)
+        print("id", {"id":_id})
         if result.status_code < 400:
             return result.json()["data"]
         return None
